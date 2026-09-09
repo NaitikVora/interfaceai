@@ -144,8 +144,11 @@ class Observation(BaseModel):
         return next((t for t in self.tables if t.ref == ref), None)
 
     def fingerprint(self) -> str:
-        """Coarse identity of the page state, used for stuck detection."""
-        return f"{self.url}|{'/'.join(self.headings)}|{len(self.controls)}|{self.text[:200]}"
+        """Coarse identity of the page state (including form values), used for stuck detection."""
+        values = "/".join(c.attributes.get("current_value", "") for c in self.controls)
+        return (
+            f"{self.url}|{'/'.join(self.headings)}|{len(self.controls)}|{values}|{self.text[:200]}"
+        )
 
 
 @dataclass(frozen=True)

@@ -96,6 +96,9 @@ class ReplayResult(BaseModel):
     )
     recoveries_applied: int = 0
     human_interventions: int = 0
+    human_completed_steps: list[str] = Field(
+        default_factory=list, description="Steps a human operator completed during a handoff"
+    )
     llm_calls: int = Field(default=0, description="Always 0 for replay; asserted by tests")
     started_at: datetime
     finished_at: datetime

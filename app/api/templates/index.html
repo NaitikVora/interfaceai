@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>Operator Console</title>
+<style>
+body{font-family:-apple-system,Segoe UI,Helvetica,Arial,sans-serif;font-size:14px;margin:24px;color:#222}
+table{border-collapse:collapse}td,th{border:1px solid #ccc;padding:6px 10px;text-align:left}
+.badge{display:inline-block;padding:2px 8px;border-radius:10px;background:#eee}
+.pending{background:#ffe9b3}.human_control{background:#cfe8ff}.released,.approved{background:#d8f5d0}.aborted,.timed_out,.unattended{background:#f8d0d0}
+</style></head><body>
+<h1>Operator Console</h1>
+<p>Run <code>{{ run_id }}</code> &middot; session state <b>{{ session_state }}</b> &middot; control owner <b>{{ owner }}</b></p>
+<form method="post" action="/pause" style="margin-bottom:16px"><button>Request pause before next step</button></form>
+<h2>Interventions</h2>
+{% if not interventions %}<p>No interventions yet. Automation is running.</p>{% endif %}
+<table>
+<tr><th>Id</th><th>Kind</th><th>Status</th><th>Step</th><th>Reason</th><th>Created</th></tr>
+{% for i in interventions %}
+<tr><td><a href="/interventions/{{ i.id }}">{{ i.id }}</a></td><td>{{ i.kind }}</td>
+<td><span class="badge {{ i.status }}">{{ i.status }}</span></td><td>{{ i.current_step or "-" }}</td>
+<td>{{ i.reason }}</td><td>{{ i.created_at.strftime("%H:%M:%S") }}</td></tr>
+{% endfor %}
+</table>
+<p style="margin-top:24px;color:#666">This page refreshes every 3 seconds.</p>
+<script>setTimeout(() => location.reload(), 3000);</script>
+</body></html>

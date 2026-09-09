@@ -54,7 +54,8 @@ class EvidenceStore:
 
     def _record(self, path: Path) -> str:
         ref = str(path.relative_to(self.run_dir))
-        self.refs.append(ref)
+        if ref not in self.refs:
+            self.refs.append(ref)
         return ref
 
     def save_png(self, name: str, data: bytes) -> str:

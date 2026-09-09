@@ -56,6 +56,7 @@ ignore = [
 
 [tool.ruff.lint.per-file-ignores]
 "tests/**" = ["ANN", "PLR", "S101"]
+"app/cli.py" = ["PLR0917"] # Typer commands take their options positionally by design
 
 [tool.ruff.format]
 quote-style = "double"

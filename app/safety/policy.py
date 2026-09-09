@@ -11,7 +11,7 @@ import json
 import re
 from enum import StrEnum
 from pathlib import Path
-from typing import Literal
+from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, ValidationError
 
@@ -76,7 +76,7 @@ class PolicyDecision(BaseModel):
     rule_id: str | None = None
     violation: ViolationCode | None = None
 
-    def as_event_data(self) -> dict[str, object]:
+    def as_event_data(self) -> dict[str, Any]:
         return self.model_dump(mode="json", exclude_none=True)
 
 

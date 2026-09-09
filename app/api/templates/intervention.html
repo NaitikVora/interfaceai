@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>Intervention {{ i.id }}</title>
+<style>
+body{font-family:-apple-system,Segoe UI,Helvetica,Arial,sans-serif;font-size:14px;margin:24px;color:#222}
+.cols{display:flex;gap:24px;align-items:flex-start}.col{flex:1;min-width:0}
+img{max-width:100%;border:1px solid #999}
+table{border-collapse:collapse;width:100%}td,th{border:1px solid #ccc;padding:5px 8px;text-align:left;vertical-align:top}
+.badge{display:inline-block;padding:2px 8px;border-radius:10px;background:#eee}
+.pending{background:#ffe9b3}.human_control{background:#cfe8ff}.released,.approved{background:#d8f5d0}.aborted,.timed_out,.unattended{background:#f8d0d0}
+button{padding:6px 12px;margin-right:6px}.danger{background:#f8d0d0}.primary{background:#cfe8ff}
+.flash{background:#fff3cd;border:1px solid #e0c060;padding:8px;margin:8px 0}
+pre{white-space:pre-wrap;background:#f6f6f6;padding:8px;border:1px solid #ddd;max-height:220px;overflow:auto}
+</style></head><body>
+<p><a href="/">&larr; all interventions</a></p>
+<h1>{{ i.id }} <span class="badge {{ i.status }}">{{ i.status }}</span></h1>
+{% if flash %}<div class="flash">{{ flash }}</div>{% endif %}
+<div class="cols">
+<div class="col">
+<table>
+<tr><th>Kind</th><td>{{ i.kind }}</td></tr>
+<tr><th>Reason</th><td>{{ i.reason }}</td></tr>
+{% if i.pending_action %}<tr><th>Pending action</th><td><b>{{ i.pending_action }}</b></td></tr>{% endif %}
+<tr><th>Capability / goal</th><td>{{ i.capability_name or "discovery" }} &mdash; {{ i.goal }}</td></tr>
+<tr><th>Current step</th><td>{{ i.current_step or "-" }} (index {{ i.step_index }})</td></tr>
+<tr><th>Session</th><td>{{ session_state }} &middot; owner: <b>{{ owner }}</b></td></tr>
+<tr><th>URL at escalation</th><td>{{ i.current_url }}</td></tr>
+<tr><th>Created</th><td>{{ i.created_at }}</td></tr>
+</table>
+
+<h3>Controls</h3>
+{% if i.status == "pending" %}
+<form method="post" action="/interventions/{{ i.id }}/take-control" style="display:inline"><button class="primary">Take control</button></form>
+{% if i.kind == "approval_required" %}<form method="post" action="/interventions/{{ i.id }}/approve" style="display:inline"><button class="primary">Approve pending action</button></form>{% endif %}
+<form method="post" action="/interventions/{{ i.id }}/abort" style="display:inline"><button class="danger">Abort run</button></form>
+{% elif i.status == "human_control" %}
+<form method="post" action="/interventions/{{ i.id }}/release" style="display:inline">
+  <input name="note" placeholder="what you did (optional)" size="32"> <button class="primary">Release &amp; resume automation</button></form>
+<form method="post" action="/interventions/{{ i.id }}/abort" style="display:inline"><button class="danger">Abort run</button></form>
+<h3>Act on the live session</h3>
+<p>Refresh the control list, then pick a ref. Actions run on the <em>same</em> browser page automation was using.</p>
+<form method="post" action="/interventions/{{ i.id }}/observe"><button>Refresh controls</button></form>
+{% if observation %}
+<table>
+<tr><th>Ref</th><th>Control</th></tr>
+{% for c in observation.controls %}<tr><td>{{ c.ref }}</td><td>{{ c.describe() }} {% if not c.enabled %}(disabled){% endif %}</td></tr>{% endfor %}
+</table>
+<form method="post" action="/interventions/{{ i.id }}/actions" style="margin-top:8px">
+  <select name="action"><option>click</option><option>type</option><option>select</option><option>press</option><option>navigate</option></select>
+  ref <input name="ref" size="4"> value <input name="value" size="18"> key <input name="key" size="6"> url <input name="url" size="20">
+  <button class="primary">Perform</button>
+</form>
+{% endif %}
+{% else %}
+<p>Resolved at {{ i.resolved_at }}{% if i.operator_note %} &mdash; note: {{ i.operator_note }}{% endif %}</p>
+{% endif %}
+
+<h3>Human action log ({{ i.human_action_log|length }})</h3>
+<table><tr><th>Time</th><th>Source</th><th>Action</th><th>Target</th><th>Value</th><th>Result</th></tr>
+{% for a in i.human_action_log %}
+<tr><td>{{ a.timestamp.strftime("%H:%M:%S") }}</td><td>{{ a.source }}</td><td>{{ a.action }}</td><td>{{ a.target or "" }}</td><td>{{ a.value or "" }}</td><td>{% if a.ok %}ok{% else %}{{ a.error }}{% endif %}</td></tr>
+{% endfor %}</table>
+<h3>Page text at escalation</h3><pre>{{ i.page_excerpt }}</pre>
+</div>
+<div class="col">
+<h3>Live screen</h3>
+<img id="live" src="/interventions/{{ i.id }}/screenshot.png" alt="live screenshot">
+<p style="color:#666">Refreshes every 2 seconds while the run is alive.</p>
+</div>
+</div>
+<script>
+const img = document.getElementById('live');
+setInterval(() => { img.src = '/interventions/{{ i.id }}/screenshot.png?t=' + Date.now(); }, 2000);
+</script>
+</body></html>

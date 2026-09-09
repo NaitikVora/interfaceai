@@ -2,6 +2,7 @@
   "vendor": "DemoBank",
   "product": "LegacyCore",
   "surface": "web",
+  "application_version": "1.4.2",
   "supported_versions": ["1.x"],
   "description": "Runtime-condition rules for the LegacyCore Teller Workstation. Rules are evaluated in order, only when a step's expected state is not reached.",
   "conditions": [

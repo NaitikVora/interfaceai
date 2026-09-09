@@ -73,7 +73,8 @@ def describe_state(state: PageState, max_chars: int = 240) -> str:
 async def evaluate_condition(condition: Condition, ctx: ConditionContext, state: PageState) -> bool:
     match condition:
         case UrlMatches(pattern=pattern):
-            return re.search(substitute(pattern, ctx.params), state.url) is not None
+            escaped = {k: re.escape(v) for k, v in ctx.params.items()}
+            return re.search(substitute(pattern, escaped), state.url) is not None
         case TextPresent(text=text):
             return substitute(text, ctx.params) in state.text
         case TextAbsent(text=text):

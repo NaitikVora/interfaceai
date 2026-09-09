@@ -77,11 +77,22 @@ from app.safety.policy import PolicyEngine
 from app.safety.redaction import Redactor
 
 RECOVERY_CLICK_TIMEOUT_S = 3.0
+HANDOFF_VERIFY_TIMEOUT_S = 2.0
+"""After a human releases control the page is already in its final state; a short bounded wait
+absorbs an in-flight navigation without stalling on conditions that will never hold."""
 
 
 class _Disposition(StrEnum):
     RETRY = "retry"
     DONE = "done"
+
+
+class _ResumeAtError(Exception):
+    """Control flow: after a human handoff, continue at ``step_index`` (0-based)."""
+
+    def __init__(self, step_index: int) -> None:
+        self.step_index = step_index
+        super().__init__(step_index)
 
 
 class ReplayExecutor:
@@ -130,9 +141,19 @@ class ReplayExecutor:
                 llm_in_loop=False,
             )
             await self._ensure_entry(artifact, run)
-            for index, step in enumerate(artifact.steps, start=1):
-                await self._run_step(run, index, step)
-                run.steps_completed = index
+            position = 0
+            while position < len(artifact.steps):
+                step = artifact.steps[position]
+                try:
+                    await self._run_step(run, position + 1, step)
+                except _ResumeAtError as jump:
+                    skipped = artifact.steps[position : jump.step_index]
+                    run.human_completed.extend(s.id for s in skipped)
+                    run.steps_completed = jump.step_index
+                    position = jump.step_index
+                    continue
+                position += 1
+                run.steps_completed = position
             await self._verify_final_checkpoint(artifact, run)
             return await self._finish(run, ReplayStatus.SUCCESS, None)
         except ReplayAbortError as abort:
@@ -592,12 +613,21 @@ class ReplayExecutor:
     async def _after_handoff(
         self, run: _RunState, index: int, step: Step, failure: Failure
     ) -> _Disposition:
-        """After a human released control: did they complete the step, or fix the page?"""
+        """After a human released control, work out where the flow now stands.
+
+        1. The step's postconditions hold  -> the human completed it; continue.
+        2. The screen has not moved on     -> retry the step once (the human may have unblocked it).
+        3. The screen moved on             -> resume at the first later step whose entry state
+                                              (preconditions) matches; the human did the steps in
+                                              between.
+        Anything else is reported as unresolved rather than guessed.
+        """
         ctx = ConditionContext(self._surface, self._resolver, run.params)
+        await self._surface.wait_for_settled(HANDOFF_VERIFY_TIMEOUT_S)
         post = await wait_for_conditions(
             step.postconditions,
             ctx,
-            timeout_s=step.timeout_s,
+            timeout_s=HANDOFF_VERIFY_TIMEOUT_S,
             poll_interval_s=self._settings.replay_poll_interval_s,
         )
         if step.postconditions and post.ok:
@@ -606,9 +636,23 @@ class ReplayExecutor:
             )
             return _Disposition.DONE
         pre = await check_conditions(step.preconditions, ctx)
-        if pre.ok and step.id not in run.retried_after_handoff:
-            run.retried_after_handoff.add(step.id)
-            return _Disposition.RETRY
+        if pre.ok:
+            if step.id not in run.retried_after_handoff:
+                run.retried_after_handoff.add(step.id)
+                return _Disposition.RETRY
+        else:
+            for later_index in range(index, len(run.artifact.steps)):
+                later = run.artifact.steps[later_index]
+                if not later.preconditions:
+                    continue
+                if (await check_conditions(later.preconditions, ctx)).ok:
+                    self._events.emit(
+                        EventType.HUMAN_CONTROL_RELEASED,
+                        step_id=step.id,
+                        resumed_at=later.id,
+                        skipped=[s.id for s in run.artifact.steps[index - 1 : later_index]],
+                    )
+                    raise _ResumeAtError(later_index)
         unresolved = failure.model_copy(
             update={
                 "message": f"{failure.message} (still unresolved after human handoff)",
@@ -737,6 +781,7 @@ class ReplayExecutor:
             drift_signals=list(run.drift),
             recoveries_applied=run.recoveries,
             human_interventions=run.interventions,
+            human_completed_steps=list(run.human_completed),
             llm_calls=0,
             started_at=run.started,
             finished_at=datetime.now(UTC),
@@ -891,6 +936,7 @@ class _RunState:
         self.drift: list[str] = []
         self.recoveries = 0
         self.interventions = 0
+        self.human_completed: list[str] = []
         self.steps_completed = 0
         self.rule_attempts: dict[tuple[str, str], int] = {}
         self.retried_after_handoff: set[str] = set()

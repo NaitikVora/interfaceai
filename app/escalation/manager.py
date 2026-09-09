@@ -153,6 +153,8 @@ class EscalationManager:
         self._waiters: dict[str, asyncio.Event] = {}
         self._latest_observation: Observation | None = None
         self.pause_requested = False
+        self.proxied_action_in_progress = False
+        """True while a console action runs, so the browser recorder does not double-record."""
 
     # ------------------------------------------------------------------ automation side
     async def request(
@@ -283,6 +285,7 @@ class EscalationManager:
             value=self._redact_value(action.value),
             url_before=url_before,
         )
+        self.proxied_action_in_progress = True
         try:
             resolved = None
             if action_request.needs_target and target is not None:
@@ -297,6 +300,8 @@ class EscalationManager:
                 record = record.model_copy(update={"value": outcome.extracted_text[:200]})
         except (ResolutionError, SurfaceActionError, ControlViolationError, ValueError) as exc:
             record = record.model_copy(update={"ok": False, "error": str(exc)[:300]})
+        finally:
+            self.proxied_action_in_progress = False
         record = record.model_copy(update={"url_after": await self._surface.current_url()})
         request.human_action_log.append(record)
         self._events.emit(
@@ -378,7 +383,10 @@ class EscalationManager:
         control = self._latest_observation.control(action.ref)
         if control is None:
             raise OperatorError(f"unknown control ref {action.ref}")
-        return control.to_target_spec()
+        # The operator picked this exact node from a fresh observation, so address it
+        # structurally: semantic strategies may legitimately be ambiguous here (that is often
+        # why a human was called in the first place).
+        return TargetSpec(description=control.describe(), css=control.css, xpath=control.xpath)
 
     def _redact_value(self, value: str | None) -> str | None:
         if value is None:

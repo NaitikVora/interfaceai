@@ -24,6 +24,7 @@ class ApplicationProfile(StrictModel):
     vendor: str
     product: str
     surface: Literal["web"] = "web"
+    application_version: str = Field(description="Version the profile was authored against")
     supported_versions: list[str] = Field(min_length=1)
     description: str = ""
     conditions: list[ConditionRule] = Field(default_factory=list)
