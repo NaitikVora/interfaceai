@@ -18,7 +18,7 @@ SUPERVISOR_INPUTS   := --input operator_id=$(DEMO_SUPERVISOR_ID) --input access_
 
 .PHONY: help setup lint format test test-unit test-integration test-e2e test-live demo discover discover-subaccount \
         replay replay-not-found replay-invalid replay-transient replay-fail-checkpoint replay-fail-ambiguous \
-        demo-escalation demo-approval inspect clean-evidence
+        demo-escalation demo-approval evidence evidence-check inspect clean-evidence
 
 help: ## Show this help
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-24s\033[0m %s\n", $$1, $$2}'
@@ -29,13 +29,13 @@ setup: ## Create the virtualenv, install pinned dependencies and Chromium, creat
 	@test -f .env || (cp .env.example .env && echo "created .env from .env.example -- add your LLM_API_KEY")
 
 lint: ## Ruff (lint + format check) and mypy --strict
-	.venv/bin/ruff check app demo_app tests
-	.venv/bin/ruff format --check app demo_app tests
+	.venv/bin/ruff check app demo_app tests scripts
+	.venv/bin/ruff format --check app demo_app tests scripts
 	.venv/bin/mypy app demo_app
 
 format: ## Auto-format
-	.venv/bin/ruff format app demo_app tests
-	.venv/bin/ruff check --fix app demo_app tests
+	.venv/bin/ruff format app demo_app tests scripts
+	.venv/bin/ruff check --fix app demo_app tests scripts
 
 test: ## All tests except the live-LLM test (browser tests run headless)
 	$(PYTHON) -m pytest -m "not live_llm" -q
@@ -97,6 +97,12 @@ demo-escalation: ## Human handoff: ambiguous locator pauses the run; resolve it 
 
 demo-approval: ## Irreversible step: sub-account confirm waits for approval at http://127.0.0.1:8001
 	$(CLI) replay --artifact $(SUBACCOUNT_ARTIFACT) --input member_id=12345 --input nickname="Emergency Fund" $(SUPERVISOR_INPUTS) --escalation console
+
+evidence: ## Genuine LLM discovery + every replay/failure/handoff scenario -> evidence/ (needs LLM_API_KEY; starts the demo app itself if needed)
+	$(PYTHON) scripts/generate_evidence.py --with-subaccount
+
+evidence-check: ## Dry run of the evidence pipeline with the scripted model stand-in (no network), into /tmp
+	$(PYTHON) scripts/generate_evidence.py --planner scripted --with-subaccount --evidence-root /tmp/cua-evidence-check --artifacts-dir /tmp/cua-artifacts-check
 
 inspect: ## Print the saved artifacts in human-readable form
 	$(CLI) inspect-artifact --artifact $(LOOKUP_ARTIFACT)

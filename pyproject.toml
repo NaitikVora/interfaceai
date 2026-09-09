@@ -57,6 +57,7 @@ ignore = [
 [tool.ruff.lint.per-file-ignores]
 "tests/**" = ["ANN", "PLR", "S101", "E501", "ASYNC110", "ASYNC240", "PLC0415"]
 "app/cli.py" = ["PLR0917"] # Typer commands take their options positionally by design
+"scripts/**" = ["E501", "PLR0917", "ASYNC110"] # operational script: long log lines, polling loops
 
 [tool.ruff.format]
 quote-style = "double"
