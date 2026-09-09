@@ -1,0 +1,91 @@
+{
+  "vendor": "DemoBank",
+  "product": "LegacyCore",
+  "surface": "web",
+  "supported_versions": ["1.x"],
+  "description": "Runtime-condition rules for the LegacyCore Teller Workstation. Rules are evaluated in order, only when a step's expected state is not reached.",
+  "conditions": [
+    {
+      "id": "member-not-found",
+      "description": "Member search returned no matching member",
+      "when": { "kind": "text_present", "text": "No member found matching" },
+      "category": "business_outcome",
+      "code": "MEMBER_NOT_FOUND",
+      "outputs": { "status": "not_found" },
+      "message_from": { "css": ".msg-error" }
+    },
+    {
+      "id": "insufficient-permission",
+      "description": "Operator role may not perform this function",
+      "when": { "kind": "text_present", "text": "do not have permission" },
+      "category": "business_outcome",
+      "code": "INSUFFICIENT_PERMISSION",
+      "outputs": { "status": "permission_denied" },
+      "message_from": { "css": ".msg-error" }
+    },
+    {
+      "id": "validation-rejected",
+      "description": "The application rejected the submitted data",
+      "when": {
+        "kind": "any_of",
+        "conditions": [
+          { "kind": "text_present", "text": "must be" },
+          { "kind": "text_present", "text": "is required" },
+          { "kind": "text_present", "text": "may contain only" }
+        ]
+      },
+      "category": "business_outcome",
+      "code": "VALIDATION_REJECTED",
+      "outputs": { "status": "validation_rejected" },
+      "message_from": { "css": ".msg-error" }
+    },
+    {
+      "id": "core-transient",
+      "description": "Core system temporarily unavailable; the form is re-rendered with a retry banner",
+      "when": { "kind": "text_present", "text": "temporarily unavailable" },
+      "category": "recoverable",
+      "code": "TRANSIENT_LOAD",
+      "recovery": { "kind": "retry_step" },
+      "max_attempts": 2
+    },
+    {
+      "id": "system-notice",
+      "description": "Full-page system notice that must be acknowledged",
+      "when": { "kind": "text_present", "text": "System Notice" },
+      "category": "recoverable",
+      "code": "KNOWN_DIALOG",
+      "recovery": { "kind": "click", "target": { "role": "button", "name": "Acknowledge" } },
+      "max_attempts": 2
+    },
+    {
+      "id": "session-refresh",
+      "description": "Session about to expire; continuing keeps the session alive",
+      "when": { "kind": "text_present", "text": "session is about to expire" },
+      "category": "recoverable",
+      "code": "SESSION_REFRESH_REQUIRED",
+      "recovery": { "kind": "click", "target": { "role": "button", "name": "Continue Session" } },
+      "max_attempts": 1
+    },
+    {
+      "id": "session-lost",
+      "description": "The session expired; the operator must sign in again",
+      "when": { "kind": "text_present", "text": "session has expired" },
+      "category": "hard_failure",
+      "code": "SESSION_LOST"
+    },
+    {
+      "id": "authentication-failed",
+      "description": "Sign-in was rejected",
+      "when": { "kind": "text_present", "text": "Invalid operator ID or access code" },
+      "category": "hard_failure",
+      "code": "AUTHENTICATION_FAILED"
+    },
+    {
+      "id": "application-error",
+      "description": "The application raised an unhandled error page",
+      "when": { "kind": "text_present", "text": "Application Error" },
+      "category": "hard_failure",
+      "code": "UNEXPECTED_STATE"
+    }
+  ]
+}

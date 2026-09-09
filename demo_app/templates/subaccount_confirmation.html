@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block content %}
+<h2 class="pgtitle">Sub-Account Opened</h2>
+<div class="msg-ok">The sub-account was opened successfully.</div>
+<table class="grid" cellspacing="0" width="420">
+<tr><td class="lbl" bgcolor="#ece9d8">Confirmation Number</td><td>{{ confirmation_no }}</td></tr>
+<tr><td class="lbl" bgcolor="#ece9d8">Member</td><td>{{ member.member_id }} &mdash; {{ member.name }}</td></tr>
+<tr><td class="lbl" bgcolor="#ece9d8">Account Type</td><td>{{ account.account_type }}</td></tr>
+<tr><td class="lbl" bgcolor="#ece9d8">Account Number</td><td>{{ account.account_no }}</td></tr>
+<tr><td class="lbl" bgcolor="#ece9d8">Nickname</td><td>{{ account.nickname }}</td></tr>
+</table>
+<p><a href="/members/{{ member.member_id }}">Return to Member Details</a></p>
+{% endblock %}

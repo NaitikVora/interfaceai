@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block content %}
+<h2 class="pgtitle">Main Menu</h2>
+<div class="msg-ok">Welcome, {{ operator.display_name }}. Core connection: ONLINE. Business date: {{ business_date }}.</div>
+<table class="grid" cellspacing="0">
+<tr><th>Function</th><th>Description</th></tr>
+<tr><td><a href="/members/search">Member Search</a></td><td>Locate a member by member number and view account balances.</td></tr>
+<tr><td><span style="color:#808080">Teller Cash Drawer</span></td><td>Not available at this workstation.</td></tr>
+<tr><td><span style="color:#808080">Reports</span></td><td>Module not licensed.</td></tr>
+</table>
+{% endblock %}

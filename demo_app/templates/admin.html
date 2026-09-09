@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+<h2 class="pgtitle">Fault Injection Console (test harness, not part of the banking app)</h2>
+<p>Current flags: <code>{{ flags }}</code></p>
+<form method="post" action="/__admin/inject">
+<table class="form" cellspacing="0">
+<tr><td class="lbl">transient_search_failures</td><td><input type="text" name="transient_search_failures" value="{{ flags.transient_search_failures }}" size="4"></td></tr>
+<tr><td class="lbl">interstitial</td><td><select name="interstitial">{% for v in interstitials %}<option value="{{ v }}" {% if v == flags.interstitial %}selected{% endif %}>{{ v }}</option>{% endfor %}</select></td></tr>
+<tr><td class="lbl">expire_session_on_next_request</td><td><input type="checkbox" name="expire_session_on_next_request" value="true" {% if flags.expire_session_on_next_request %}checked{% endif %}></td></tr>
+<tr><td class="lbl">response_delay_ms</td><td><input type="text" name="response_delay_ms" value="{{ flags.response_delay_ms }}" size="6"></td></tr>
+<tr><td class="lbl">duplicate_search_form</td><td><input type="checkbox" name="duplicate_search_form" value="true" {% if flags.duplicate_search_form %}checked{% endif %}></td></tr>
+<tr><td class="lbl">app_error_on_search</td><td><input type="checkbox" name="app_error_on_search" value="true" {% if flags.app_error_on_search %}checked{% endif %}></td></tr>
+<tr><td></td><td><input type="submit" value="Apply"></td></tr>
+</table>
+</form>
+<form method="post" action="/__admin/reset"><input type="submit" value="Reset flags"></form>
+{% endblock %}

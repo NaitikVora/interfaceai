@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="notice">
+<h2 class="pgtitle">{{ heading }}</h2>
+<p>{{ body }}</p>
+<form method="post" action="/notice/ack">
+<input type="hidden" name="next" value="{{ next }}">
+<input type="submit" value="{{ button }}">
+</form>
+</div>
+{% endblock %}

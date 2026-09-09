@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block content %}
+<h2 class="pgtitle">Open New Sub-Account</h2>
+<div class="msg-info">Member {{ member.member_id }} &mdash; {{ member.name }}</div>
+{% if errors %}<div class="msg-error">{% for e in errors %}{{ e }}<br>{% endfor %}</div>{% endif %}
+<form method="post" action="/members/{{ member.member_id }}/subaccounts/new">
+<table class="form" cellspacing="0">
+<tr><td class="lbl">Account Type:</td><td><select name="account_type">{% for t in account_types %}<option value="{{ t }}" {% if t == account_type %}selected{% endif %}>{{ t }}</option>{% endfor %}</select></td></tr>
+<tr><td class="lbl">Nickname:</td><td><input type="text" name="nickname" size="24" maxlength="30" value="{{ nickname or '' }}"></td></tr>
+<tr><td></td><td><input type="submit" value="Continue"> <a href="/members/{{ member.member_id }}">Cancel</a></td></tr>
+</table>
+</form>
+{% endblock %}

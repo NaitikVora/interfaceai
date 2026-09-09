@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+<h2 class="pgtitle">Review Sub-Account Request</h2>
+<div class="msg-info">Please review the request below. Opening the account posts to the core system and cannot be undone from this workstation.</div>
+<table class="grid" cellspacing="0" width="420">
+<tr><td class="lbl" bgcolor="#ece9d8">Member</td><td>{{ member.member_id }} &mdash; {{ member.name }}</td></tr>
+<tr><td class="lbl" bgcolor="#ece9d8">Account Type</td><td>{{ pending.account_type }}</td></tr>
+<tr><td class="lbl" bgcolor="#ece9d8">Nickname</td><td>{{ pending.nickname }}</td></tr>
+<tr><td class="lbl" bgcolor="#ece9d8">Opening Balance</td><td>$0.00</td></tr>
+</table>
+<br>
+<form method="post" action="/members/{{ member.member_id }}/subaccounts/confirm">
+<input type="submit" value="Confirm and Open Account"> &nbsp; <a href="/members/{{ member.member_id }}/subaccounts/new">Back</a> &nbsp; <a href="/members/{{ member.member_id }}">Cancel</a>
+</form>
+{% endblock %}

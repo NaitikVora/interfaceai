@@ -1,0 +1,24 @@
+# Secrets and local configuration
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+build/
+dist/
+
+# Local scratch runs (committed evidence lives under evidence/ and is curated)
+evidence/_scratch/
+tmp/
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/

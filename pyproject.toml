@@ -1,0 +1,82 @@
+[project]
+name = "computer-use-automation"
+version = "0.1.0"
+description = "LLM-driven discovery -> versioned capability artifact -> deterministic replay, with policy guardrails and same-session human handoff."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+dependencies = [
+    "playwright==1.62.0",
+    "pydantic==2.13.5",
+    "pydantic-settings==2.15.0",
+    "fastapi==0.141.1",
+    "uvicorn==0.52.4",
+    "jinja2==3.1.6",
+    "python-multipart==0.0.32",
+    "openai==3.10.0",
+    "structlog==26.1.0",
+    "typer==0.27.2",
+    "httpx==0.28.1",
+]
+
+[dependency-groups]
+dev = [
+    "pytest==9.1.1",
+    "pytest-asyncio==1.4.0",
+    "mypy==2.3.1",
+    "ruff==0.16.6",
+]
+
+[project.scripts]
+cua = "app.cli:main"
+
+[build-system]
+requires = ["hatchling==1.32.0"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["app", "demo_app"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+src = ["app", "demo_app", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "N", "W", "SIM", "RUF", "ASYNC", "PL", "ANN"]
+ignore = [
+    "PLR0913", # many arguments: explicit dependency injection is preferred over config bags
+    "PLR0911", # return/branch/statement counts penalise exhaustive pattern matching and
+    "PLR0912", # closure-style FastAPI route factories; cohesion is reviewed by hand instead
+    "PLR0915",
+    "PLR2004", # magic values in tests / obvious constants
+    "ANN401",  # Any is legitimate at JSON boundaries
+    "RUF012",  # mutable class attributes are used deliberately in pydantic models
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["ANN", "PLR", "S101"]
+
+[tool.ruff.format]
+quote-style = "double"
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+warn_unreachable = true
+plugins = ["pydantic.mypy"]
+exclude = ["^tests/", "^\\.venv/"]
+
+[[tool.mypy.overrides]]
+module = ["playwright.*"]
+ignore_missing_imports = false
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "session"
+testpaths = ["tests"]
+markers = [
+    "live_llm: requires real LLM credentials in the environment (skipped otherwise)",
+    "browser: launches a real Chromium via Playwright",
+]
+filterwarnings = ["error::DeprecationWarning:app.*"]

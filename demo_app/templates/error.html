@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+{% block content %}
+<h2 class="pgtitle">{{ heading }}</h2>
+<div class="msg-error">{{ detail }}</div>
+{% if reference %}<p style="color:#505050">Reference: {{ reference }}</p>{% endif %}
+<p><a href="/home">Return to Main Menu</a></p>
+{% endblock %}

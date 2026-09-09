@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block content %}
+<h2 class="pgtitle">Member Details</h2>
+<table cellspacing="0" cellpadding="0" width="100%">
+<tr>
+<td valign="top" width="380">
+<table class="grid" cellspacing="0" width="360">
+<tr><td class="lbl" bgcolor="#ece9d8">Member Number</td><td>{{ member.member_id }}</td></tr>
+<tr><td class="lbl" bgcolor="#ece9d8">Name</td><td>{{ member.name }}</td></tr>
+<tr><td class="lbl" bgcolor="#ece9d8">Status</td><td>{{ member.status }}</td></tr>
+<tr><td class="lbl" bgcolor="#ece9d8">Member Since</td><td>{{ member.member_since }}</td></tr>
+<tr><td class="lbl" bgcolor="#ece9d8">City</td><td>{{ member.city }}</td></tr>
+</table>
+</td>
+<td valign="top">
+<div class="side">
+<b>Member Actions</b><br>
+<a href="/members/{{ member.member_id }}/subaccounts/new">Open New Sub-Account</a><br>
+<a href="/members/search">Back to Member Search</a>
+</div>
+</td>
+</tr>
+</table>
+<br>
+<b>Accounts</b>
+<table class="grid" cellspacing="0" width="100%">
+<tr><th>Account Type</th><th>Account Number</th><th>Nickname</th><th>Current Balance</th><th>Status</th></tr>
+{% for a in accounts %}
+<tr><td>{{ a.account_type }}</td><td>{{ a.account_no }}</td><td>{{ a.nickname }}</td><td class="num">{{ a.balance | money }}</td><td>{{ a.status }}</td></tr>
+{% endfor %}
+</table>
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block content %}
+<h2 class="pgtitle">Member Search</h2>
+{% if error %}<div class="msg-error">{{ error }}</div>{% endif %}
+<table cellspacing="0" cellpadding="0" width="100%"><tr>
+<td valign="top">
+<form method="post" action="/members/search">
+<table class="form" cellspacing="0">
+<tr><td class="lbl">Member Number:</td><td><input type="text" name="member_no" size="10" maxlength="5" title="Member Number" value="{{ member_no or '' }}"></td></tr>
+<tr><td></td><td><input type="submit" value="Search"> <input type="reset" value="Clear"></td></tr>
+</table>
+</form>
+<p style="color:#505050">Enter the five-digit member number exactly as printed on the member card.</p>
+</td>
+{% if duplicate_form %}
+<td valign="top" width="260">
+<div class="side">
+<b>Quick Member Search</b>
+<form method="post" action="/members/search">
+<table class="form" cellspacing="0">
+<tr><td class="lbl">Member Number:</td><td><input type="text" name="member_no" size="10" maxlength="5" title="Member Number"></td></tr>
+<tr><td></td><td><input type="submit" value="Search"></td></tr>
+</table>
+</form>
+</div>
+</td>
+{% endif %}
+</tr></table>
+{% endblock %}

@@ -1,0 +1,23 @@
+body { background: #d4d0c8; font-family: Tahoma, Verdana, Arial, sans-serif; font-size: 12px; margin: 0; color: #000; }
+.frame { width: 900px; margin: 0 auto; background: #fff; border: 1px solid #808080; }
+.hdr { background: #003366; color: #fff; padding: 6px 10px; font-weight: bold; font-size: 13px; }
+.hdr .ver { font-weight: normal; font-size: 10px; color: #c0c8d8; }
+.nav { background: #ece9d8; border-bottom: 1px solid #808080; padding: 3px 10px; }
+.nav a { color: #003366; margin-right: 14px; }
+.nav form { display: inline; }
+.content { padding: 10px 14px 18px 14px; }
+.pgtitle { font-size: 14px; margin: 4px 0 10px 0; color: #003366; border-bottom: 1px solid #a0a0a0; padding-bottom: 3px; }
+.grid { border-collapse: collapse; }
+.grid th { background: #ece9d8; border: 1px solid #a0a0a0; padding: 3px 8px; text-align: left; font-weight: bold; }
+.grid td { border: 1px solid #a0a0a0; padding: 3px 8px; }
+.grid td.num { text-align: right; }
+.form td.lbl { padding: 3px 8px 3px 0; white-space: nowrap; }
+.form td { padding: 3px 0; }
+.msg-error { background: #ffe4e4; border: 1px solid #c00000; color: #800000; padding: 5px 8px; margin: 0 0 10px 0; }
+.msg-info { background: #e8f0ff; border: 1px solid #6080c0; color: #203060; padding: 5px 8px; margin: 0 0 10px 0; }
+.msg-ok { background: #e4ffe4; border: 1px solid #008000; color: #004000; padding: 5px 8px; margin: 0 0 10px 0; }
+.notice { border: 2px solid #c08000; background: #fff8e0; padding: 12px; width: 460px; margin: 30px auto; }
+.footer { background: #ece9d8; border-top: 1px solid #808080; padding: 4px 10px; font-size: 10px; color: #505050; }
+.side { background: #f4f2ea; border: 1px solid #a0a0a0; padding: 6px; }
+input[type=text], input[type=password], select { font-family: Tahoma, Verdana, Arial, sans-serif; font-size: 12px; }
+input[type=submit], input[type=button] { font-size: 12px; padding: 1px 10px; }

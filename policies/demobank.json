@@ -1,0 +1,46 @@
+{
+  "name": "demobank-legacycore-default",
+  "description": "Guardrails for automating the local DemoBank LegacyCore demo. Only the local demo host is reachable; the fault-injection console is never a valid target; account-changing controls require a human.",
+  "allowed_url_patterns": [
+    "^http://(localhost|127\\.0\\.0\\.1)(:\\d+)?(/.*)?$"
+  ],
+  "denied_url_patterns": [
+    "/__admin"
+  ],
+  "allowed_actions": ["navigate", "click", "type", "select", "press", "extract"],
+  "sensitive_actions": "allow",
+  "irreversible_actions": "require_confirmation",
+  "coordinate_fallback": "never",
+  "secrets_only_into_masked_fields": true,
+  "risk_rules": [
+    {
+      "id": "commit-controls",
+      "description": "Controls whose name indicates posting a change to the core system",
+      "risk_class": "irreversible",
+      "actions": ["click", "press"],
+      "target_name_pattern": "(?i)\\b(confirm|post|open account|close account|delete|remove|transfer|approve|submit transaction)\\b"
+    },
+    {
+      "id": "review-screen-submit",
+      "description": "Any click or key press on a review/confirmation screen commits the request",
+      "risk_class": "irreversible",
+      "actions": ["click", "press"],
+      "url_pattern": "/subaccounts/review$",
+      "target_name_pattern": "(?i)^(?!back$|cancel$).*"
+    },
+    {
+      "id": "credentials",
+      "description": "Entering operator credentials",
+      "risk_class": "sensitive",
+      "actions": ["type"],
+      "target_attribute_type": "password"
+    },
+    {
+      "id": "account-maintenance-data-entry",
+      "description": "Entering data on account maintenance screens",
+      "risk_class": "sensitive",
+      "actions": ["type", "select"],
+      "url_pattern": "/subaccounts/"
+    }
+  ]
+}

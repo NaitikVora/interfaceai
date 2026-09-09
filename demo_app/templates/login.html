@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+<h2 class="pgtitle">Operator Sign In</h2>
+{% if message %}<div class="msg-info">{{ message }}</div>{% endif %}
+{% if error %}<div class="msg-error">{{ error }}</div>{% endif %}
+<form method="post" action="/login">
+<table class="form" cellspacing="0">
+<tr><td class="lbl"><label for="op">Operator ID:</label></td><td><input type="text" id="op" name="operator_id" size="16" value="{{ operator_id or '' }}"></td></tr>
+<tr><td class="lbl"><label for="ac">Access Code:</label></td><td><input type="password" id="ac" name="access_code" size="16"></td></tr>
+<tr><td></td><td><input type="submit" value="Sign In"></td></tr>
+</table>
+</form>
+<p style="margin-top:18px;color:#505050">Authorized personnel only. Activity is monitored.</p>
+{% endblock %}
