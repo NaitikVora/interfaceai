@@ -120,19 +120,23 @@ def demo_inject(
     for item in flag:
         key, _, value = item.partition("=")
         payload[key] = value if value else "true"
-    base = url or get_settings().demo_app_url
-    response = httpx.post(f"{base}/__admin/inject", json=payload, timeout=10)
-    response.raise_for_status()
-    typer.echo(json.dumps(response.json()["flags"], indent=2))
+    typer.echo(json.dumps(_admin_post(url, "/__admin/inject", payload)["flags"], indent=2))
 
 
 @demo.command("reset")
 def demo_reset(url: Annotated[str | None, typer.Option(help="Demo app base URL")] = None) -> None:
     """Clear all injected failure modes."""
+    typer.echo(json.dumps(_admin_post(url, "/__admin/reset")["flags"], indent=2))
+
+
+def _admin_post(url: str | None, path: str, payload: dict[str, Any] | None = None) -> Any:
     base = url or get_settings().demo_app_url
-    response = httpx.post(f"{base}/__admin/reset", timeout=10)
-    response.raise_for_status()
-    typer.echo(json.dumps(response.json()["flags"], indent=2))
+    try:
+        response = httpx.post(f"{base}{path}", json=payload, timeout=10)
+        response.raise_for_status()
+    except httpx.HTTPError as exc:
+        _fail(f"demo app not reachable at {base} ({exc.__class__.__name__}). Start it: make demo")
+    return response.json()
 
 
 # ------------------------------------------------------------------------------ discover

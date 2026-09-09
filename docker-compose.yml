@@ -1,0 +1,40 @@
+# Two services: the synthetic legacy banking app and the automation CLI.
+#
+#   docker compose up -d demo-app
+#   docker compose run --rm cli replay --artifact artifacts/member_savings_lookup.v1.json \
+#       --input member_id=12345 --input operator_id=teller1 --input access_code=env:DEMO_ACCESS_CODE \
+#       --base-url http://demo-app:8000 --escalation none
+#
+# `--base-url` overrides the recorded host: the same artifact, a different deployment (the
+# simplest form of a tenant override). The policy allowlist admits the `demo-app` hostname.
+services:
+  demo-app:
+    build: .
+    command: ["demo", "start", "--host", "0.0.0.0", "--port", "8000"]
+    ports:
+      - "8000:8000"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/login')"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  cli:
+    build: .
+    profiles: ["tools"]
+    depends_on:
+      demo-app:
+        condition: service_healthy
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      DEMO_APP_URL: http://demo-app:8000
+      DEMO_ACCESS_CODE: ${DEMO_ACCESS_CODE:-teller-pass}
+      DEMO_SUPERVISOR_CODE: ${DEMO_SUPERVISOR_CODE:-super-pass}
+      HEADLESS: "true"
+    ports:
+      - "8001:8001"
+    volumes:
+      - ./evidence:/app/evidence
+      - ./artifacts:/app/artifacts

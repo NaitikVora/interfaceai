@@ -2,7 +2,7 @@
   "name": "demobank-legacycore-default",
   "description": "Guardrails for automating the local DemoBank LegacyCore demo. Only the local demo host is reachable; the fault-injection console is never a valid target; account-changing controls require a human.",
   "allowed_url_patterns": [
-    "^http://(localhost|127\\.0\\.0\\.1)(:\\d+)?(/.*)?$"
+    "^http://(localhost|127\\.0\\.0\\.1|demo-app)(:\\d+)?(/.*)?$"
   ],
   "denied_url_patterns": [
     "/__admin"
