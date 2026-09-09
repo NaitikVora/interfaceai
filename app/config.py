@@ -75,7 +75,7 @@ class Settings(BaseSettings):
 
     @property
     def llm_configured(self) -> bool:
-        """True when a real LLM call can be attempted (the `.env.example` placeholder does not count)."""
+        """True when a real LLM call can be attempted (the example placeholder does not count)."""
         if self.llm_api_key is None:
             return False
         value = self.llm_api_key.get_secret_value()
