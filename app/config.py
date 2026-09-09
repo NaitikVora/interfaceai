@@ -12,6 +12,9 @@ from pathlib import Path
 from pydantic import Field, SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+PLACEHOLDER_API_KEY = "sk-replace-with-your-key"
+"""The value shipped in `.env.example`; treated as "not configured" so the error is helpful."""
+
 
 class Settings(BaseSettings):
     """All runtime configuration. Field names map to upper-cased environment variables."""
@@ -72,8 +75,11 @@ class Settings(BaseSettings):
 
     @property
     def llm_configured(self) -> bool:
-        """True when a real LLM call can be attempted."""
-        return self.llm_api_key is not None and bool(self.llm_api_key.get_secret_value())
+        """True when a real LLM call can be attempted (the `.env.example` placeholder does not count)."""
+        if self.llm_api_key is None:
+            return False
+        value = self.llm_api_key.get_secret_value()
+        return bool(value) and value != PLACEHOLDER_API_KEY
 
 
 @lru_cache(maxsize=1)
