@@ -130,16 +130,16 @@ class ReplayExecutor:
         run = _RunState(artifact, started, max_runtime_s=self._settings.replay_max_runtime_s)
         self._events.capability_id = artifact.artifact_id
 
+        self._events.emit(
+            EventType.REPLAY_STARTED,
+            capability=artifact.name,
+            version=artifact.version,
+            input_names=sorted(inputs),
+            steps=len(artifact.steps),
+            llm_in_loop=False,
+        )
         try:
             run.params = self._prepare(artifact, inputs, base_url)
-            self._events.emit(
-                EventType.REPLAY_STARTED,
-                capability=artifact.name,
-                version=artifact.version,
-                inputs={k: v for k, v in run.params.items() if not self._is_secret(artifact, k)},
-                steps=len(artifact.steps),
-                llm_in_loop=False,
-            )
             await self._ensure_entry(artifact, run)
             position = 0
             while position < len(artifact.steps):
@@ -841,11 +841,6 @@ class ReplayExecutor:
             for name in find_placeholders(value)
             if name in artifact.inputs
         )
-
-    @staticmethod
-    def _is_secret(artifact: CapabilityArtifact, name: str) -> bool:
-        spec = artifact.inputs.get(name)
-        return spec is not None and spec.sensitive
 
     def _check_run_deadline(self, run: _RunState, step: Step) -> None:
         if run.deadline.expired():

@@ -356,9 +356,7 @@ class Recorder:
                 application=self._profile.product,
                 version=self._profile.application_version,
                 base_url=self._base_url,
-                entry_path=urlsplit(self.steps[0].arguments.url or "/").path
-                if self.steps and self.steps[0].action is ActionType.NAVIGATE
-                else "/",
+                entry_path=self._entry_path(),
             ),
             inputs=inputs,
             outputs=outputs,
@@ -395,6 +393,14 @@ class Recorder:
             ),
             created_at=datetime.now(UTC),
         )
+
+    def _entry_path(self) -> str:
+        if not self.steps or self.steps[0].action is not ActionType.NAVIGATE:
+            return "/"
+        url = self.steps[0].arguments.url or "/"
+        if url.startswith("${base_url}"):
+            return url[len("${base_url}") :] or "/"
+        return urlsplit(url).path or "/"
 
     def _used_inputs(self) -> set[str]:
         used: set[str] = set()

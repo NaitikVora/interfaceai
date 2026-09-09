@@ -55,7 +55,7 @@ ignore = [
 ]
 
 [tool.ruff.lint.per-file-ignores]
-"tests/**" = ["ANN", "PLR", "S101"]
+"tests/**" = ["ANN", "PLR", "S101", "E501", "ASYNC110", "ASYNC240", "PLC0415"]
 "app/cli.py" = ["PLR0917"] # Typer commands take their options positionally by design
 
 [tool.ruff.format]
@@ -75,6 +75,7 @@ ignore_missing_imports = false
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
 asyncio_default_fixture_loop_scope = "session"
+asyncio_default_test_loop_scope = "session"
 testpaths = ["tests"]
 markers = [
     "live_llm: requires real LLM credentials in the environment (skipped otherwise)",

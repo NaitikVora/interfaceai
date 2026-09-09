@@ -39,7 +39,9 @@ def parse_controls(observation_text: str) -> list[ObservedControl]:
                 in_controls = False
                 continue
             if m := _CONTROL_RE.match(line):
-                controls.append(ObservedControl(m.group(1), m.group(2), m.group(3) or "", m.group(4)))
+                controls.append(
+                    ObservedControl(m.group(1), m.group(2), m.group(3) or "", m.group(4))
+                )
     return controls
 
 
@@ -63,19 +65,33 @@ def field_value(observation_text: str, ref: str) -> str | None:
 
 def find(controls: list[ObservedControl], role: str, name: str, within: str | None = None) -> str:
     for control in controls:
-        if control.role == role and control.name == name and (within is None or within in control.rest):
+        if (
+            control.role == role
+            and control.name == name
+            and (within is None or within in control.rest)
+        ):
             return control.ref
     raise LookupError(f"no {role} {name!r} in observation")
 
 
 def _click(ref: str, why: str, heading: str | None = None) -> Decision:
-    return Decision(reasoning=why, action=AgentAction.CLICK, target=ControlRef(ref=ref),
-                    expected_heading=heading, confidence=0.9)
+    return Decision(
+        reasoning=why,
+        action=AgentAction.CLICK,
+        target=ControlRef(ref=ref),
+        expected_heading=heading,
+        confidence=0.9,
+    )
 
 
 def _type(ref: str, value: str, why: str) -> Decision:
-    return Decision(reasoning=why, action=AgentAction.TYPE, target=ControlRef(ref=ref),
-                    value=value, confidence=0.9)
+    return Decision(
+        reasoning=why,
+        action=AgentAction.TYPE,
+        target=ControlRef(ref=ref),
+        value=value,
+        confidence=0.9,
+    )
 
 
 def savings_lookup_script(observation_text: str, _step: int) -> Decision:
@@ -87,12 +103,18 @@ def savings_lookup_script(observation_text: str, _step: int) -> Decision:
         code = find(controls, "textbox", "Access Code:")
         if not field_value(observation_text, op):
             return _type(op, "${operator_id}", "Enter the operator id from inputs")
-        if "RECENT ACTIONS" not in observation_text or "${access_code}" not in observation_text.split("RECENT ACTIONS")[-1]:
+        if (
+            "RECENT ACTIONS" not in observation_text
+            or "${access_code}" not in observation_text.rsplit("RECENT ACTIONS", maxsplit=1)[-1]
+        ):
             return _type(code, "${access_code}", "Enter the access code placeholder")
         return _click(find(controls, "button", "Sign In"), "Submit the sign-in form", "Main Menu")
     if heading == "Main Menu":
-        return _click(find(controls, "link", "Member Search", within="table.grid"),
-                      "Open member search from the menu", "Member Search")
+        return _click(
+            find(controls, "link", "Member Search", within="table.grid"),
+            "Open member search from the menu",
+            "Member Search",
+        )
     if heading == "Member Search":
         field = find(controls, "textbox", "Member Number")
         if field_value(observation_text, field) is None:
@@ -103,16 +125,26 @@ def savings_lookup_script(observation_text: str, _step: int) -> Decision:
             return Decision(
                 reasoning="The savings balance is in the accounts table",
                 action=AgentAction.EXTRACT,
-                target=TableCellRef(table_ref="t2", row_match="Savings", column_header="Current Balance"),
+                target=TableCellRef(
+                    table_ref="t2", row_match="Savings", column_header="Current Balance"
+                ),
                 output_name="savings_balance",
                 output_type=ValueType.DECIMAL,
                 confidence=0.95,
             )
-        return Decision(reasoning="Goal reached", action=AgentAction.FINISH,
-                        summary="Looked up the member and read the current savings balance.",
-                        outputs={"member_id": "${member_id}"}, confidence=0.99)
-    return Decision(reasoning="Unexpected screen", action=AgentAction.ESCALATE,
-                    reason=f"unknown screen {heading!r}", confidence=0.3)
+        return Decision(
+            reasoning="Goal reached",
+            action=AgentAction.FINISH,
+            summary="Looked up the member and read the current savings balance.",
+            outputs={"member_id": "${member_id}"},
+            confidence=0.99,
+        )
+    return Decision(
+        reasoning="Unexpected screen",
+        action=AgentAction.ESCALATE,
+        reason=f"unknown screen {heading!r}",
+        confidence=0.3,
+    )
 
 
 def subaccount_script(observation_text: str, _step: int) -> Decision:
@@ -122,37 +154,57 @@ def subaccount_script(observation_text: str, _step: int) -> Decision:
     if heading in {"Operator Sign In", "Main Menu", "Member Search"}:
         return savings_lookup_script(observation_text, _step)
     if heading == "Member Details":
-        return _click(find(controls, "link", "Open New Sub-Account"), "Start opening a sub-account",
-                      "Open New Sub-Account")
+        return _click(
+            find(controls, "link", "Open New Sub-Account"),
+            "Start opening a sub-account",
+            "Open New Sub-Account",
+        )
     if heading == "Open New Sub-Account":
         nick = find(controls, "textbox", "")
         if field_value(observation_text, nick) is None:
             return _type(nick, "${nickname}", "Enter the requested nickname")
-        return _click(find(controls, "button", "Continue"), "Continue to review", "Review Sub-Account Request")
+        return _click(
+            find(controls, "button", "Continue"), "Continue to review", "Review Sub-Account Request"
+        )
     if heading == "Review Sub-Account Request":
-        return _click(find(controls, "button", "Confirm and Open Account"), "Confirm the request",
-                      "Sub-Account Opened")
+        return _click(
+            find(controls, "button", "Confirm and Open Account"),
+            "Confirm the request",
+            "Sub-Account Opened",
+        )
     if heading == "Sub-Account Opened":
         if not has_extracted(observation_text, "confirmation_id"):
             return Decision(
                 reasoning="Read the confirmation number",
                 action=AgentAction.EXTRACT,
-                target=TableCellRef(table_ref="t1", row_match="Confirmation Number", column_index=1),
+                target=TableCellRef(
+                    table_ref="t1", row_match="Confirmation Number", column_index=1
+                ),
                 output_name="confirmation_id",
                 output_type=ValueType.STRING,
                 confidence=0.95,
             )
-        return Decision(reasoning="Goal reached", action=AgentAction.FINISH,
-                        summary="Opened a sub-account and reached the confirmation screen.",
-                        outputs={"member_id": "${member_id}"}, confidence=0.99)
-    return Decision(reasoning="Unexpected screen", action=AgentAction.ESCALATE,
-                    reason=f"unknown screen {heading!r}", confidence=0.3)
+        return Decision(
+            reasoning="Goal reached",
+            action=AgentAction.FINISH,
+            summary="Opened a sub-account and reached the confirmation screen.",
+            outputs={"member_id": "${member_id}"},
+            confidence=0.99,
+        )
+    return Decision(
+        reasoning="Unexpected screen",
+        action=AgentAction.ESCALATE,
+        reason=f"unknown screen {heading!r}",
+        confidence=0.3,
+    )
 
 
 class ScriptedPlanner:
     """Implements ``app.agent.planner.Planner`` without a model."""
 
-    def __init__(self, script: Callable[[str, int], Decision], model_name: str = "scripted-test-double") -> None:
+    def __init__(
+        self, script: Callable[[str, int], Decision], model_name: str = "scripted-test-double"
+    ) -> None:
         self._script = script
         self._model_name = model_name
         self._calls: list[PlannerCall] = []
@@ -169,8 +221,11 @@ class ScriptedPlanner:
         decision = self._script(observation_text, step)
         self._calls.append(
             PlannerCall(
-                step=step, model=self._model_name, prompt_chars=len(goal) + len(observation_text),
-                attempts=1, raw_response=decision.model_dump_json(exclude_none=True),
+                step=step,
+                model=self._model_name,
+                prompt_chars=len(goal) + len(observation_text),
+                attempts=1,
+                raw_response=decision.model_dump_json(exclude_none=True),
                 decision=decision.model_dump(mode="json", exclude_none=True),
             )
         )

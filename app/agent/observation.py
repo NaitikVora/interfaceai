@@ -69,8 +69,11 @@ def render_observation(
 
     rendered = redactor.redact_text("\n\n".join(sections))
     if len(rendered) > max_chars:
-        rendered = rendered[: max_chars - 24] + "\n...[observation truncated]"
+        rendered = rendered[: max_chars - len(TRUNCATION_MARKER)] + TRUNCATION_MARKER
     return rendered
+
+
+TRUNCATION_MARKER = "\n...[observation truncated]"
 
 
 def _render_control(control: ControlDescriptor) -> str:
