@@ -1,0 +1,42 @@
+{
+  "status": "SUCCESS",
+  "run_id": "replay-[REDACTED:card]64cf",
+  "capability_id": "b3dd56df-44ff-4f0f-88ce-1054d6a02b61",
+  "capability_name": "member_savings_lookup",
+  "capability_version": 1,
+  "outputs": {
+    "status": "success",
+    "member_id": "12345",
+    "savings_balance": "8432.17",
+    "message": null
+  },
+  "failure": null,
+  "step_id": null,
+  "steps_completed": 8,
+  "steps_total": 8,
+  "evidence_dir": "/Users/naitik/Developer/interfaceai/evidence/replay/replay-[REDACTED:card]64cf",
+  "evidence_refs": [
+    "step-06-s06-type-textbox-member-number-ambiguous-target.png",
+    "step-06-s06-type-textbox-member-number-ambiguous-target-page.txt",
+    "intervention-01-target_unresolved.png",
+    "int-001.json",
+    "final-screenshot.png"
+  ],
+  "strategies_used": {
+    "s02-type-textbox-operator-id": "role_name",
+    "s03-type-textbox-access-code": "[REDACTED]",
+    "s04-click-button-sign-in": "role_name",
+    "s05-click-link-member-search": "role_name",
+    "s08-extract-table-cell-savings-curre": "table_cell"
+  },
+  "drift_signals": [],
+  "recoveries_applied": 0,
+  "human_interventions": 1,
+  "human_completed_steps": [
+    "s06-type-textbox-member-number",
+    "s07-click-button-search"
+  ],
+  "llm_calls": 0,
+  "started_at": "2026-09-09T05:37:20.960744Z",
+  "finished_at": "2026-09-09T05:37:24.221336Z"
+}

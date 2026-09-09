@@ -1,0 +1,109 @@
+{
+  "status": "ESCALATED",
+  "run_id": "failure-[REDACTED:card]cd99",
+  "capability_id": "b3dd56df-44ff-4f0f-88ce-1054d6a02b61",
+  "capability_name": "member_savings_lookup",
+  "capability_version": 1,
+  "outputs": {},
+  "failure": {
+    "category": "hard_failure",
+    "code": "AMBIGUOUS_TARGET",
+    "message": "ambiguous target: textbox 'Member Number' (escalated: no operator)",
+    "expected": "exactly one usable element for textbox 'Member Number'",
+    "observed": "url=http://127.0.0.1:8000/members/search headings=[Member Search] text='DemoBank LegacyCore\u2122 Teller Workstation v1.4.2 Signed in as T. Teller (Teller) | Main Menu Member Search Member Search Member Number: Enter the five-digit member number exactly as printed on the member card. Quick Member Search Member Numbe\u2026'",
+    "step_id": "s06-type-textbox-member-number",
+    "screenshot_ref": "step-06-s06-type-textbox-member-number-ambiguous-target.png",
+    "timestamp": "2026-09-09T05:37:20.470281Z",
+    "details": {
+      "locator_diagnostics": {
+        "polls": 2,
+        "duration_ms": 186,
+        "drift_fallback": false,
+        "attempts": [
+          {
+            "spec": 0,
+            "strategy": "role_name",
+            "matches": 2,
+            "usable": 2,
+            "detail": "ambiguous"
+          },
+          {
+            "spec": 0,
+            "strategy": "attributes",
+            "matches": 2,
+            "usable": 2,
+            "detail": "ambiguous"
+          },
+          {
+            "spec": 0,
+            "strategy": "css",
+            "matches": 0,
+            "usable": 0,
+            "detail": "skipped: cannot break a semantic tie"
+          },
+          {
+            "spec": 0,
+            "strategy": "xpath",
+            "matches": 0,
+            "usable": 0,
+            "detail": "skipped: cannot break a semantic tie"
+          },
+          {
+            "spec": 0,
+            "strategy": "role_name",
+            "matches": 2,
+            "usable": 2,
+            "detail": "ambiguous"
+          },
+          {
+            "spec": 0,
+            "strategy": "attributes",
+            "matches": 2,
+            "usable": 2,
+            "detail": "ambiguous"
+          },
+          {
+            "spec": 0,
+            "strategy": "css",
+            "matches": 0,
+            "usable": 0,
+            "detail": "skipped: cannot break a semantic tie"
+          },
+          {
+            "spec": 0,
+            "strategy": "xpath",
+            "matches": 0,
+            "usable": 0,
+            "detail": "skipped: cannot break a semantic tie"
+          }
+        ]
+      },
+      "escalation": "NO_OPERATOR",
+      "intervention_id": "int-001"
+    }
+  },
+  "step_id": "s06-type-textbox-member-number",
+  "steps_completed": 5,
+  "steps_total": 8,
+  "evidence_dir": "/Users/naitik/Developer/interfaceai/evidence/failure/failure-[REDACTED:card]cd99",
+  "evidence_refs": [
+    "step-06-s06-type-textbox-member-number-ambiguous-target.png",
+    "step-06-s06-type-textbox-member-number-ambiguous-target-page.txt",
+    "intervention-01-target_unresolved.png",
+    "int-001.json",
+    "final-screenshot.png"
+  ],
+  "strategies_used": {
+    "s02-type-textbox-operator-id": "role_name",
+    "s03-type-textbox-access-code": "[REDACTED]",
+    "s04-click-button-sign-in": "role_name",
+    "s05-click-link-member-search": "role_name"
+  },
+  "drift_signals": [],
+  "recoveries_applied": 0,
+  "human_interventions": 1,
+  "human_completed_steps": [],
+  "llm_calls": 0,
+  "started_at": "2026-09-09T05:37:20.019227Z",
+  "finished_at": "2026-09-09T05:37:20.522030Z"
+}

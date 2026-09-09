@@ -1,0 +1,13 @@
+{
+  "status": "COMPLETED",
+  "run_id": "discovery-[REDACTED:card]e00f",
+  "goal": "Look up member 12345, open a new Savings sub-account with nickname Emergency Fund, and reach the confirmation screen",
+  "artifact_path": "/Users/naitik/Developer/interfaceai/artifacts/open_savings_subaccount.v1.json",
+  "artifact_id": "945c0d95-f2ce-413a-86ec-aded6e9c9235",
+  "steps_recorded": 11,
+  "llm_calls": 11,
+  "extracted": {},
+  "failure": null,
+  "evidence_dir": "/Users/naitik/Developer/interfaceai/evidence/discovery/discovery-[REDACTED:card]e00f",
+  "duration_s": 11.79
+}

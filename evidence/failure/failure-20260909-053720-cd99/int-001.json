@@ -1,0 +1,87 @@
+{
+  "id": "int-001",
+  "run_id": "failure-[REDACTED:card]cd99",
+  "capability_id": "b3dd56df-44ff-4f0f-88ce-1054d6a02b61",
+  "capability_name": "member_savings_lookup",
+  "goal": "Successfully extracted the current savings balance for member ${member_id}.",
+  "kind": "target_unresolved",
+  "reason": "ambiguous target: textbox 'Member Number'",
+  "current_step": "s06-type-textbox-member-number",
+  "step_index": 6,
+  "pending_action": null,
+  "screenshot_ref": "intervention-01-target_unresolved.png",
+  "current_url": "http://127.0.0.1:8000/members/search",
+  "page_excerpt": "DemoBank LegacyCore\u2122 Teller Workstation v1.4.2 Signed in as T. Teller (Teller) | Main Menu Member Search Member Search Member Number: Enter the five-digit member number exactly as printed on the member card. Quick Member Search Member Number: LegacyCore\u2122 is a synthetic demo system. All members, accounts and balances are fictitious. Session: 77fp7E",
+  "details": {
+    "expected": "exactly one usable element for textbox 'Member Number'",
+    "observed": "url=http://127.0.0.1:8000/members/search headings=[Member Search] text='DemoBank LegacyCore\u2122 Teller Workstation v1.4.2 Signed in as T. Teller (Teller) | Main Menu Member Search Member Search Member Number: Enter the five-digit member number exactly as printed on the member card. Quick Member Search Member Numbe\u2026'",
+    "locator_diagnostics": {
+      "polls": 2,
+      "duration_ms": 186,
+      "drift_fallback": false,
+      "attempts": [
+        {
+          "spec": 0,
+          "strategy": "role_name",
+          "matches": 2,
+          "usable": 2,
+          "detail": "ambiguous"
+        },
+        {
+          "spec": 0,
+          "strategy": "attributes",
+          "matches": 2,
+          "usable": 2,
+          "detail": "ambiguous"
+        },
+        {
+          "spec": 0,
+          "strategy": "css",
+          "matches": 0,
+          "usable": 0,
+          "detail": "skipped: cannot break a semantic tie"
+        },
+        {
+          "spec": 0,
+          "strategy": "xpath",
+          "matches": 0,
+          "usable": 0,
+          "detail": "skipped: cannot break a semantic tie"
+        },
+        {
+          "spec": 0,
+          "strategy": "role_name",
+          "matches": 2,
+          "usable": 2,
+          "detail": "ambiguous"
+        },
+        {
+          "spec": 0,
+          "strategy": "attributes",
+          "matches": 2,
+          "usable": 2,
+          "detail": "ambiguous"
+        },
+        {
+          "spec": 0,
+          "strategy": "css",
+          "matches": 0,
+          "usable": 0,
+          "detail": "skipped: cannot break a semantic tie"
+        },
+        {
+          "spec": 0,
+          "strategy": "xpath",
+          "matches": 0,
+          "usable": 0,
+          "detail": "skipped: cannot break a semantic tie"
+        }
+      ]
+    }
+  },
+  "created_at": "2026-09-09T05:37:20.491350Z",
+  "status": "unattended",
+  "resolved_at": "2026-09-09T05:37:20.492464Z",
+  "operator_note": "no operator attached",
+  "human_action_log": []
+}

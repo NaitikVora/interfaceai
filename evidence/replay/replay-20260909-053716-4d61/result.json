@@ -1,0 +1,48 @@
+{
+  "status": "BUSINESS_OUTCOME",
+  "run_id": "replay-[REDACTED:card]4d61",
+  "capability_id": "b3dd56df-44ff-4f0f-88ce-1054d6a02b61",
+  "capability_name": "member_savings_lookup",
+  "capability_version": 1,
+  "outputs": {
+    "status": "not_found",
+    "member_id": "99999",
+    "savings_balance": null,
+    "message": "No member found matching member number 99999."
+  },
+  "failure": {
+    "category": "business_outcome",
+    "code": "MEMBER_NOT_FOUND",
+    "message": "No member found matching member number 99999.",
+    "expected": null,
+    "observed": "url=http://127.0.0.1:8000/members/search headings=[Member Search] text='DemoBank LegacyCore\u2122 Teller Workstation v1.4.2 Signed in as T. Teller (Teller) | Main Menu Member Search Member Search No member found matching member number 99999. Member Number: Enter the five-digit member number exactly as printed on the\u2026'",
+    "step_id": "s07-click-button-search",
+    "screenshot_ref": "step-07-s07-click-button-search-member-not-found.png",
+    "timestamp": "2026-09-09T05:37:17.351899Z",
+    "details": {}
+  },
+  "step_id": "s07-click-button-search",
+  "steps_completed": 6,
+  "steps_total": 8,
+  "evidence_dir": "/Users/naitik/Developer/interfaceai/evidence/replay/replay-[REDACTED:card]4d61",
+  "evidence_refs": [
+    "step-07-s07-click-button-search-member-not-found.png",
+    "step-07-s07-click-button-search-member-not-found-page.txt",
+    "final-screenshot.png"
+  ],
+  "strategies_used": {
+    "s02-type-textbox-operator-id": "role_name",
+    "s03-type-textbox-access-code": "[REDACTED]",
+    "s04-click-button-sign-in": "role_name",
+    "s05-click-link-member-search": "role_name",
+    "s06-type-textbox-member-number": "role_name",
+    "s07-click-button-search": "role_name"
+  },
+  "drift_signals": [],
+  "recoveries_applied": 0,
+  "human_interventions": 0,
+  "human_completed_steps": [],
+  "llm_calls": 0,
+  "started_at": "2026-09-09T05:37:16.845372Z",
+  "finished_at": "2026-09-09T05:37:17.372649Z"
+}

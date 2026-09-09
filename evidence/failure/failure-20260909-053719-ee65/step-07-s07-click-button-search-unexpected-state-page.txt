@@ -1,0 +1,1 @@
+DemoBank LegacyCore™ Teller Workstation v1.4.2 Signed in as T. Teller (Teller) | Main Menu Member Search Application Error An unexpected error occurred while contacting the core system. Please contact the help desk. Reference: CORE-EXC-0x7F31 Return to Main Menu LegacyCore™ is a synthetic demo system. All members, accounts and balances are fictitious. Session: qGJyoM

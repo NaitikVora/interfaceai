@@ -1,0 +1,853 @@
+{
+  "schema_version": "1.0",
+  "artifact_id": "945c0d95-f2ce-413a-86ec-aded6e9c9235",
+  "name": "open_savings_subaccount",
+  "version": 1,
+  "description": "Successfully opened a new Savings sub-account with nickname '${nickname}' for member ${member_id} and reached the confirmation screen.",
+  "target": {
+    "surface": "web",
+    "vendor": "DemoBank",
+    "application": "LegacyCore",
+    "version": "1.4.2",
+    "base_url": "http://127.0.0.1:8000",
+    "entry_path": "/login"
+  },
+  "inputs": {
+    "member_id": {
+      "type": "string",
+      "description": "member id supplied by the caller",
+      "required": true,
+      "sensitive": false,
+      "pattern": "^\\d+$"
+    },
+    "nickname": {
+      "type": "string",
+      "description": "nickname supplied by the caller",
+      "required": true,
+      "sensitive": false
+    },
+    "operator_id": {
+      "type": "string",
+      "description": "operator id supplied by the caller",
+      "required": true,
+      "sensitive": false
+    },
+    "access_code": {
+      "type": "string",
+      "description": "access code supplied by the caller",
+      "required": true,
+      "sensitive": true
+    }
+  },
+  "outputs": {
+    "status": {
+      "type": "string",
+      "description": "success, or the business outcome that pre-empted the flow",
+      "nullable": false,
+      "enum": [
+        "success",
+        "not_found",
+        "permission_denied",
+        "validation_rejected"
+      ],
+      "source": {
+        "kind": "status"
+      }
+    },
+    "member_id": {
+      "type": "string",
+      "description": "echo of input member_id",
+      "nullable": false,
+      "source": {
+        "kind": "input",
+        "name": "member_id"
+      }
+    },
+    "message": {
+      "type": "string",
+      "description": "the application's own message when a business outcome occurs",
+      "nullable": true,
+      "source": {
+        "kind": "rule_message"
+      }
+    }
+  },
+  "steps": [
+    {
+      "id": "s01-navigate-navigate",
+      "action": "navigate",
+      "description": "Open ${base_url}/login",
+      "arguments": {
+        "url": "${base_url}/login",
+        "clear_first": true
+      },
+      "preconditions": [],
+      "postconditions": [
+        {
+          "kind": "url_matches",
+          "pattern": "/login$"
+        },
+        {
+          "kind": "heading_present",
+          "text": "Operator Sign In"
+        }
+      ],
+      "timeout_s": 10.0,
+      "retry_policy": {
+        "max_attempts": 2,
+        "backoff_s": 0.5
+      },
+      "risk_class": "safe",
+      "on_error": "escalate",
+      "evidence_policy": "on_failure"
+    },
+    {
+      "id": "s02-type-textbox-operator-id",
+      "action": "type",
+      "description": "Enter ${operator_id} into textbox 'Operator ID:'",
+      "target": {
+        "description": "textbox 'Operator ID:'",
+        "role": "textbox",
+        "name": "Operator ID:",
+        "label": "Operator ID:",
+        "attributes": {
+          "tag": "input",
+          "name": "operator_id",
+          "id": "op",
+          "type": "text"
+        },
+        "css": "#op",
+        "xpath": "/html/body/table/tbody/tr[3]/td/form/table/tbody/tr[1]/td[2]/input",
+        "fallbacks": []
+      },
+      "arguments": {
+        "value": "${operator_id}",
+        "clear_first": true
+      },
+      "preconditions": [
+        {
+          "kind": "url_matches",
+          "pattern": "/login$"
+        },
+        {
+          "kind": "heading_present",
+          "text": "Operator Sign In"
+        }
+      ],
+      "postconditions": [
+        {
+          "kind": "element_value",
+          "target": {
+            "description": "textbox 'Operator ID:'",
+            "role": "textbox",
+            "name": "Operator ID:",
+            "label": "Operator ID:",
+            "attributes": {
+              "tag": "input",
+              "name": "operator_id",
+              "id": "op",
+              "type": "text"
+            },
+            "css": "#op",
+            "xpath": "/html/body/table/tbody/tr[3]/td/form/table/tbody/tr[1]/td[2]/input",
+            "fallbacks": []
+          },
+          "value": "${operator_id}"
+        }
+      ],
+      "timeout_s": 10.0,
+      "retry_policy": {
+        "max_attempts": 2,
+        "backoff_s": 0.5
+      },
+      "risk_class": "safe",
+      "on_error": "escalate",
+      "evidence_policy": "on_failure"
+    },
+    {
+      "id": "s03-type-textbox-access-code",
+      "action": "type",
+      "description": "Enter ${access_code} into textbox 'Access Code:'",
+      "target": {
+        "description": "textbox 'Access Code:'",
+        "role": "textbox",
+        "name": "Access Code:",
+        "label": "Access Code:",
+        "attributes": {
+          "tag": "input",
+          "name": "access_code",
+          "id": "ac",
+          "type": "password"
+        },
+        "css": "#ac",
+        "xpath": "/html/body/table/tbody/tr[3]/td/form/table/tbody/tr[2]/td[2]/input",
+        "fallbacks": []
+      },
+      "arguments": {
+        "value": "${access_code}",
+        "clear_first": true
+      },
+      "preconditions": [
+        {
+          "kind": "url_matches",
+          "pattern": "/login$"
+        },
+        {
+          "kind": "heading_present",
+          "text": "Operator Sign In"
+        }
+      ],
+      "postconditions": [
+        {
+          "kind": "element_value",
+          "target": {
+            "description": "textbox 'Access Code:'",
+            "role": "textbox",
+            "name": "Access Code:",
+            "label": "Access Code:",
+            "attributes": {
+              "tag": "input",
+              "name": "access_code",
+              "id": "ac",
+              "type": "password"
+            },
+            "css": "#ac",
+            "xpath": "/html/body/table/tbody/tr[3]/td/form/table/tbody/tr[2]/td[2]/input",
+            "fallbacks": []
+          },
+          "value": "${access_code}"
+        }
+      ],
+      "timeout_s": 10.0,
+      "retry_policy": {
+        "max_attempts": 2,
+        "backoff_s": 0.5
+      },
+      "risk_class": "sensitive",
+      "on_error": "escalate",
+      "evidence_policy": "on_failure"
+    },
+    {
+      "id": "s04-click-button-sign-in",
+      "action": "click",
+      "description": "Click button 'Sign In'",
+      "target": {
+        "description": "button 'Sign In'",
+        "role": "button",
+        "name": "Sign In",
+        "attributes": {
+          "tag": "input",
+          "type": "submit",
+          "value": "Sign In"
+        },
+        "css": "body > table > tbody > tr:nth-of-type(3) > td > form > table > tbody > tr:nth-of-type(3) > td:nth-of-type(2) > input",
+        "xpath": "/html/body/table/tbody/tr[3]/td/form/table/tbody/tr[3]/td[2]/input",
+        "fallbacks": []
+      },
+      "arguments": {
+        "clear_first": true
+      },
+      "preconditions": [
+        {
+          "kind": "url_matches",
+          "pattern": "/login$"
+        },
+        {
+          "kind": "heading_present",
+          "text": "Operator Sign In"
+        }
+      ],
+      "postconditions": [
+        {
+          "kind": "url_matches",
+          "pattern": "/home$"
+        },
+        {
+          "kind": "heading_present",
+          "text": "Main Menu"
+        }
+      ],
+      "timeout_s": 10.0,
+      "retry_policy": {
+        "max_attempts": 2,
+        "backoff_s": 0.5
+      },
+      "risk_class": "safe",
+      "on_error": "escalate",
+      "evidence_policy": "on_failure"
+    },
+    {
+      "id": "s05-click-link-member-search",
+      "action": "click",
+      "description": "Click link 'Member Search'",
+      "target": {
+        "description": "link 'Member Search'",
+        "within": {
+          "description": "td container",
+          "attributes": {
+            "tag": "td",
+            "class": "nav"
+          },
+          "css": "body > table > tbody > tr:nth-of-type(2) > td",
+          "fallbacks": []
+        },
+        "role": "link",
+        "name": "Member Search",
+        "attributes": {
+          "tag": "a",
+          "href": "/members/search"
+        },
+        "text": "Member Search",
+        "css": "body > table > tbody > tr:nth-of-type(2) > td > a:nth-of-type(2)",
+        "xpath": "/html/body/table/tbody/tr[2]/td/a[2]",
+        "fallbacks": []
+      },
+      "arguments": {
+        "clear_first": true
+      },
+      "preconditions": [
+        {
+          "kind": "url_matches",
+          "pattern": "/home$"
+        },
+        {
+          "kind": "heading_present",
+          "text": "Main Menu"
+        }
+      ],
+      "postconditions": [
+        {
+          "kind": "url_matches",
+          "pattern": "/members/search$"
+        },
+        {
+          "kind": "heading_present",
+          "text": "Member Search"
+        }
+      ],
+      "timeout_s": 10.0,
+      "retry_policy": {
+        "max_attempts": 2,
+        "backoff_s": 0.5
+      },
+      "risk_class": "safe",
+      "on_error": "escalate",
+      "evidence_policy": "on_failure"
+    },
+    {
+      "id": "s06-type-textbox-member-number",
+      "action": "type",
+      "description": "Enter ${member_id} into textbox 'Member Number'",
+      "target": {
+        "description": "textbox 'Member Number'",
+        "role": "textbox",
+        "name": "Member Number",
+        "attributes": {
+          "tag": "input",
+          "name": "member_no",
+          "type": "text",
+          "title": "Member Number"
+        },
+        "css": "body > table > tbody > tr:nth-of-type(3) > td > table > tbody > tr > td > form > table > tbody > tr:nth-of-type(1) > td:nth-of-type(2) > input",
+        "xpath": "/html/body/table/tbody/tr[3]/td/table/tbody/tr/td/form/table/tbody/tr[1]/td[2]/input",
+        "fallbacks": []
+      },
+      "arguments": {
+        "value": "${member_id}",
+        "clear_first": true
+      },
+      "preconditions": [
+        {
+          "kind": "url_matches",
+          "pattern": "/members/search$"
+        },
+        {
+          "kind": "heading_present",
+          "text": "Member Search"
+        }
+      ],
+      "postconditions": [
+        {
+          "kind": "element_value",
+          "target": {
+            "description": "textbox 'Member Number'",
+            "role": "textbox",
+            "name": "Member Number",
+            "attributes": {
+              "tag": "input",
+              "name": "member_no",
+              "type": "text",
+              "title": "Member Number"
+            },
+            "css": "body > table > tbody > tr:nth-of-type(3) > td > table > tbody > tr > td > form > table > tbody > tr:nth-of-type(1) > td:nth-of-type(2) > input",
+            "xpath": "/html/body/table/tbody/tr[3]/td/table/tbody/tr/td/form/table/tbody/tr[1]/td[2]/input",
+            "fallbacks": []
+          },
+          "value": "${member_id}"
+        }
+      ],
+      "timeout_s": 10.0,
+      "retry_policy": {
+        "max_attempts": 2,
+        "backoff_s": 0.5
+      },
+      "risk_class": "safe",
+      "on_error": "escalate",
+      "evidence_policy": "on_failure"
+    },
+    {
+      "id": "s07-click-button-search",
+      "action": "click",
+      "description": "Click button 'Search'",
+      "target": {
+        "description": "button 'Search'",
+        "role": "button",
+        "name": "Search",
+        "attributes": {
+          "tag": "input",
+          "type": "submit",
+          "value": "Search"
+        },
+        "css": "body > table > tbody > tr:nth-of-type(3) > td > table > tbody > tr > td > form > table > tbody > tr:nth-of-type(2) > td:nth-of-type(2) > input:nth-of-type(1)",
+        "xpath": "/html/body/table/tbody/tr[3]/td/table/tbody/tr/td/form/table/tbody/tr[2]/td[2]/input[1]",
+        "fallbacks": []
+      },
+      "arguments": {
+        "clear_first": true
+      },
+      "preconditions": [
+        {
+          "kind": "url_matches",
+          "pattern": "/members/search$"
+        },
+        {
+          "kind": "heading_present",
+          "text": "Member Search"
+        }
+      ],
+      "postconditions": [
+        {
+          "kind": "url_matches",
+          "pattern": "/members/${member_id}$"
+        },
+        {
+          "kind": "heading_present",
+          "text": "Member Details"
+        }
+      ],
+      "timeout_s": 10.0,
+      "retry_policy": {
+        "max_attempts": 2,
+        "backoff_s": 0.5
+      },
+      "risk_class": "safe",
+      "on_error": "escalate",
+      "evidence_policy": "on_failure"
+    },
+    {
+      "id": "s08-click-link-open-new-sub-accoun",
+      "action": "click",
+      "description": "Click link 'Open New Sub-Account'",
+      "target": {
+        "description": "link 'Open New Sub-Account'",
+        "role": "link",
+        "name": "Open New Sub-Account",
+        "attributes": {
+          "tag": "a",
+          "href": "/members/12345/subaccounts/new"
+        },
+        "text": "Open New Sub-Account",
+        "css": "body > table > tbody > tr:nth-of-type(3) > td > table:nth-of-type(1) > tbody > tr > td:nth-of-type(2) > div > a:nth-of-type(1)",
+        "xpath": "/html/body/table/tbody/tr[3]/td/table[1]/tbody/tr/td[2]/div/a[1]",
+        "fallbacks": []
+      },
+      "arguments": {
+        "clear_first": true
+      },
+      "preconditions": [
+        {
+          "kind": "url_matches",
+          "pattern": "/members/${member_id}$"
+        },
+        {
+          "kind": "heading_present",
+          "text": "Member Details"
+        }
+      ],
+      "postconditions": [
+        {
+          "kind": "url_matches",
+          "pattern": "/members/${member_id}/subaccounts/new$"
+        },
+        {
+          "kind": "heading_present",
+          "text": "Open New Sub-Account"
+        }
+      ],
+      "timeout_s": 10.0,
+      "retry_policy": {
+        "max_attempts": 2,
+        "backoff_s": 0.5
+      },
+      "risk_class": "safe",
+      "on_error": "escalate",
+      "evidence_policy": "on_failure"
+    },
+    {
+      "id": "s09-type-textbox-name-nickname",
+      "action": "type",
+      "description": "Enter ${nickname} into textbox [name=nickname]",
+      "target": {
+        "description": "textbox [name=nickname]",
+        "attributes": {
+          "tag": "input",
+          "name": "nickname",
+          "type": "text"
+        },
+        "css": "body > table > tbody > tr:nth-of-type(3) > td > form > table > tbody > tr:nth-of-type(2) > td:nth-of-type(2) > input",
+        "xpath": "/html/body/table/tbody/tr[3]/td/form/table/tbody/tr[2]/td[2]/input",
+        "fallbacks": []
+      },
+      "arguments": {
+        "value": "${nickname}",
+        "clear_first": true
+      },
+      "preconditions": [
+        {
+          "kind": "url_matches",
+          "pattern": "/members/${member_id}/subaccounts/new$"
+        },
+        {
+          "kind": "heading_present",
+          "text": "Open New Sub-Account"
+        }
+      ],
+      "postconditions": [
+        {
+          "kind": "element_value",
+          "target": {
+            "description": "textbox [name=nickname]",
+            "attributes": {
+              "tag": "input",
+              "name": "nickname",
+              "type": "text"
+            },
+            "css": "body > table > tbody > tr:nth-of-type(3) > td > form > table > tbody > tr:nth-of-type(2) > td:nth-of-type(2) > input",
+            "xpath": "/html/body/table/tbody/tr[3]/td/form/table/tbody/tr[2]/td[2]/input",
+            "fallbacks": []
+          },
+          "value": "${nickname}"
+        }
+      ],
+      "timeout_s": 10.0,
+      "retry_policy": {
+        "max_attempts": 2,
+        "backoff_s": 0.5
+      },
+      "risk_class": "sensitive",
+      "on_error": "escalate",
+      "evidence_policy": "on_failure"
+    },
+    {
+      "id": "s10-click-button-continue",
+      "action": "click",
+      "description": "Click button 'Continue'",
+      "target": {
+        "description": "button 'Continue'",
+        "role": "button",
+        "name": "Continue",
+        "attributes": {
+          "tag": "input",
+          "type": "submit",
+          "value": "Continue"
+        },
+        "css": "body > table > tbody > tr:nth-of-type(3) > td > form > table > tbody > tr:nth-of-type(3) > td:nth-of-type(2) > input",
+        "xpath": "/html/body/table/tbody/tr[3]/td/form/table/tbody/tr[3]/td[2]/input",
+        "fallbacks": []
+      },
+      "arguments": {
+        "clear_first": true
+      },
+      "preconditions": [
+        {
+          "kind": "url_matches",
+          "pattern": "/members/${member_id}/subaccounts/new$"
+        },
+        {
+          "kind": "heading_present",
+          "text": "Open New Sub-Account"
+        }
+      ],
+      "postconditions": [
+        {
+          "kind": "url_matches",
+          "pattern": "/members/${member_id}/subaccounts/review$"
+        },
+        {
+          "kind": "heading_present",
+          "text": "Review Sub-Account Request"
+        }
+      ],
+      "timeout_s": 10.0,
+      "retry_policy": {
+        "max_attempts": 2,
+        "backoff_s": 0.5
+      },
+      "risk_class": "safe",
+      "on_error": "escalate",
+      "evidence_policy": "on_failure"
+    },
+    {
+      "id": "s11-click-button-confirm-and-open",
+      "action": "click",
+      "description": "Click button 'Confirm and Open Account'",
+      "target": {
+        "description": "button 'Confirm and Open Account'",
+        "role": "button",
+        "name": "Confirm and Open Account",
+        "attributes": {
+          "tag": "input",
+          "type": "submit",
+          "value": "Confirm and Open Account"
+        },
+        "css": "body > table > tbody > tr:nth-of-type(3) > td > form > input",
+        "xpath": "/html/body/table/tbody/tr[3]/td/form/input",
+        "fallbacks": []
+      },
+      "arguments": {
+        "clear_first": true
+      },
+      "preconditions": [
+        {
+          "kind": "url_matches",
+          "pattern": "/members/${member_id}/subaccounts/review$"
+        },
+        {
+          "kind": "heading_present",
+          "text": "Review Sub-Account Request"
+        }
+      ],
+      "postconditions": [
+        {
+          "kind": "url_matches",
+          "pattern": "/members/${member_id}/subaccounts/confirmation/SA\\-2026\\-000001$"
+        },
+        {
+          "kind": "heading_present",
+          "text": "Sub-Account Opened"
+        }
+      ],
+      "timeout_s": 10.0,
+      "retry_policy": {
+        "max_attempts": 1,
+        "backoff_s": 0.5
+      },
+      "risk_class": "irreversible",
+      "on_error": "escalate",
+      "evidence_policy": "on_failure"
+    }
+  ],
+  "checkpoint": {
+    "description": "Final screen reached: Sub-Account Opened",
+    "conditions": [
+      {
+        "kind": "url_matches",
+        "pattern": "/members/${member_id}/subaccounts/confirmation/SA\\-2026\\-000001$"
+      },
+      {
+        "kind": "heading_present",
+        "text": "Sub-Account Opened"
+      }
+    ]
+  },
+  "conditions": [
+    {
+      "id": "member-not-found",
+      "description": "Member search returned no matching member",
+      "when": {
+        "kind": "text_present",
+        "text": "No member found matching"
+      },
+      "category": "business_outcome",
+      "code": "MEMBER_NOT_FOUND",
+      "outputs": {
+        "status": "not_found"
+      },
+      "message_from": {
+        "css": ".msg-error",
+        "fallbacks": []
+      },
+      "max_attempts": 1
+    },
+    {
+      "id": "insufficient-permission",
+      "description": "Operator role may not perform this function",
+      "when": {
+        "kind": "text_present",
+        "text": "do not have permission"
+      },
+      "category": "business_outcome",
+      "code": "INSUFFICIENT_PERMISSION",
+      "outputs": {
+        "status": "permission_denied"
+      },
+      "message_from": {
+        "css": ".msg-error",
+        "fallbacks": []
+      },
+      "max_attempts": 1
+    },
+    {
+      "id": "validation-rejected",
+      "description": "The application rejected the submitted data",
+      "when": {
+        "kind": "any_of",
+        "conditions": [
+          {
+            "kind": "text_present",
+            "text": "must be"
+          },
+          {
+            "kind": "text_present",
+            "text": "is required"
+          },
+          {
+            "kind": "text_present",
+            "text": "may contain only"
+          }
+        ]
+      },
+      "category": "business_outcome",
+      "code": "VALIDATION_REJECTED",
+      "outputs": {
+        "status": "validation_rejected"
+      },
+      "message_from": {
+        "css": ".msg-error",
+        "fallbacks": []
+      },
+      "max_attempts": 1
+    },
+    {
+      "id": "core-transient",
+      "description": "Core system temporarily unavailable; the form is re-rendered with a retry banner",
+      "when": {
+        "kind": "text_present",
+        "text": "temporarily unavailable"
+      },
+      "category": "recoverable",
+      "code": "TRANSIENT_LOAD",
+      "outputs": {},
+      "recovery": {
+        "kind": "retry_step"
+      },
+      "max_attempts": 2
+    },
+    {
+      "id": "system-notice",
+      "description": "Full-page system notice that must be acknowledged",
+      "when": {
+        "kind": "text_present",
+        "text": "System Notice"
+      },
+      "category": "recoverable",
+      "code": "KNOWN_DIALOG",
+      "outputs": {},
+      "recovery": {
+        "kind": "click",
+        "target": {
+          "role": "button",
+          "name": "Acknowledge",
+          "fallbacks": []
+        }
+      },
+      "max_attempts": 2
+    },
+    {
+      "id": "session-refresh",
+      "description": "Session about to expire; continuing keeps the session alive",
+      "when": {
+        "kind": "text_present",
+        "text": "session is about to expire"
+      },
+      "category": "recoverable",
+      "code": "SESSION_REFRESH_REQUIRED",
+      "outputs": {},
+      "recovery": {
+        "kind": "click",
+        "target": {
+          "role": "button",
+          "name": "Continue Session",
+          "fallbacks": []
+        }
+      },
+      "max_attempts": 1
+    },
+    {
+      "id": "session-lost",
+      "description": "The session expired; the operator must sign in again",
+      "when": {
+        "kind": "text_present",
+        "text": "session has expired"
+      },
+      "category": "hard_failure",
+      "code": "SESSION_LOST",
+      "outputs": {},
+      "max_attempts": 1
+    },
+    {
+      "id": "authentication-failed",
+      "description": "Sign-in was rejected",
+      "when": {
+        "kind": "text_present",
+        "text": "Invalid operator ID or access code"
+      },
+      "category": "hard_failure",
+      "code": "AUTHENTICATION_FAILED",
+      "outputs": {},
+      "max_attempts": 1
+    },
+    {
+      "id": "application-error",
+      "description": "The application raised an unhandled error page",
+      "when": {
+        "kind": "text_present",
+        "text": "Application Error"
+      },
+      "category": "hard_failure",
+      "code": "UNEXPECTED_STATE",
+      "outputs": {},
+      "max_attempts": 1
+    }
+  ],
+  "policy": {
+    "actions": [
+      "click",
+      "navigate",
+      "type"
+    ],
+    "url_patterns": [
+      "^http://127\\.0\\.0\\.1:8000(/.*)?$"
+    ],
+    "max_risk_class": "irreversible",
+    "requires_human_confirmation": true
+  },
+  "compatibility": {
+    "vendor": "DemoBank",
+    "product": "LegacyCore",
+    "supported_versions": [
+      "1.x"
+    ],
+    "notes": "Recorded against the base profile; tenant overrides layer on top."
+  },
+  "metadata": {
+    "goal": "Look up member ${member_id}, open a new Savings sub-account with nickname ${nickname}, and reach the confirmation screen",
+    "discovery_run_id": "discovery-20260909-053724-e00f",
+    "llm_model": "gpt-4.1",
+    "llm_decisions": 11,
+    "discovery_duration_s": 11.74,
+    "recorded_by": "app.agent.recorder",
+    "notes": []
+  },
+  "created_at": "2026-09-09T05:37:36.564269Z"
+}

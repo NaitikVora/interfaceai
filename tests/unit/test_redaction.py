@@ -35,6 +35,19 @@ def test_secret_like_keys_are_masked_in_structures() -> None:
     assert out["empty_password"] == ""
 
 
+def test_token_counters_are_evidence_not_secrets() -> None:
+    redactor = Redactor()
+    usage = {
+        "prompt_tokens": 1362,
+        "completion_tokens": 88,
+        "id_token": "eyJ...",
+        "auth-token": "x",
+    }
+    out = redactor.redact(usage)
+    assert out["prompt_tokens"] == 1362 and out["completion_tokens"] == 88
+    assert out["id_token"] == REDACTED and out["auth-token"] == REDACTED
+
+
 def test_pii_patterns_are_masked_but_business_values_survive() -> None:
     redactor = Redactor()
     text = (

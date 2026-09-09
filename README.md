@@ -222,7 +222,7 @@ control; those clicks are recorded too (password values masked).
 ## 6. Tests
 
 ```bash
-make test               # 117 tests: unit + browser integration + scripted end-to-end (no network)
+make test               # 118 tests: unit + browser integration + scripted end-to-end (no network)
 make test-unit          # fast, no browser
 make test-live          # genuine LLM discovery test (needs LLM_API_KEY)
 make lint               # ruff + mypy --strict

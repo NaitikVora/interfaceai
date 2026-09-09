@@ -1,0 +1,21 @@
+{
+  "id": "int-001",
+  "run_id": "discovery-[REDACTED:card]e00f",
+  "capability_id": null,
+  "capability_name": null,
+  "goal": "Look up member 12345, open a new Savings sub-account with nickname Emergency Fund, and reach the confirmation screen",
+  "kind": "approval_required",
+  "reason": "irreversible action requires human confirmation",
+  "current_step": null,
+  "step_index": 11,
+  "pending_action": "click button 'Confirm and Open Account'",
+  "screenshot_ref": "intervention-01-approval_required.png",
+  "current_url": "http://127.0.0.1:8000/members/12345/subaccounts/review",
+  "page_excerpt": "DemoBank LegacyCore\u2122 Teller Workstation v1.4.2 Signed in as S. Supervisor (Supervisor) | Main Menu Member Search Review Sub-Account Request Please review the request below. Opening the account posts to the core system and cannot be undone from this workstation. Member 12345 \u2014 Demo Member Account Type Savings Nickname Emergency Fund Opening Balance $0.00 Back Cancel LegacyCore\u2122 is a synthetic demo system. All members, accounts and balances are fictitious. Session: 7dmlar",
+  "details": {},
+  "created_at": "2026-09-09T05:37:34.897130Z",
+  "status": "approved",
+  "resolved_at": "2026-09-09T05:37:34.921928Z",
+  "operator_note": "reviewed the request on the review screen; approved",
+  "human_action_log": []
+}

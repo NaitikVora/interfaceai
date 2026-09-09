@@ -1,0 +1,15 @@
+{
+  "status": "COMPLETED",
+  "run_id": "discovery-[REDACTED:card]26a3",
+  "goal": "Look up member 12345 and read their current savings balance",
+  "artifact_path": "/Users/naitik/Developer/interfaceai/artifacts/member_savings_lookup.v1.json",
+  "artifact_id": "b3dd56df-44ff-4f0f-88ce-1054d6a02b61",
+  "steps_recorded": 8,
+  "llm_calls": 8,
+  "extracted": {
+    "savings_balance": "8432.17"
+  },
+  "failure": null,
+  "evidence_dir": "/Users/naitik/Developer/interfaceai/evidence/discovery/discovery-[REDACTED:card]26a3",
+  "duration_s": 12.69
+}

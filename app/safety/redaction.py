@@ -19,9 +19,11 @@ from typing import Any
 REDACTED = "[REDACTED]"
 
 SECRET_KEY_RE = re.compile(
-    r"(?i)(password|passwd|secret|token|api[_-]?key|authorization|cookie|access[_-]?code"
+    r"(?i)(password|passwd|secret|token(?!s\b)|api[_-]?key|authorization|cookie|access[_-]?code"
     r"|credential|private[_-]?key)"
 )
+"""``token(?!s\\b)`` keeps ``id_token``/``auth-token`` masked while letting usage counters such as
+``prompt_tokens`` through: token *counts* are evidence, not secrets."""
 
 DEFAULT_PII_PATTERNS: tuple[tuple[str, re.Pattern[str]], ...] = (
     ("ssn", re.compile(r"\b\d{3}-\d{2}-\d{4}\b")),
